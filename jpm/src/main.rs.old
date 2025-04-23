@@ -1,0 +1,30 @@
+use rand::seq::SliceRandom;
+fn simulate_amoebas(amoebas: u32, minutes_left: u32) -> u32 {
+    if minutes_left == 0 {
+        return amoebas;
+    } else {
+        if amoebas == 0 {
+            return 0;
+        } else {
+            let mut _amoebas: u32 = amoebas;
+            for _ in 0..amoebas {
+                let choices = vec![-1, 0, 1, 2];
+                let mut rng = rand::thread_rng();
+                let choice = choices.choose(&mut rng).unwrap();
+                _amoebas = (choice + (_amoebas as i32)) as u32;
+            }
+            return simulate_amoebas(_amoebas, minutes_left - 1);
+        }
+    }
+}
+
+fn main() {
+    const NUM_SIMULATIONS: u32 = 1000;
+    const SIMULATION_MINUTES: u32 = 25;
+    let simulations  = (0..NUM_SIMULATIONS)
+        .map(|_| simulate_amoebas(1, SIMULATION_MINUTES));
+    let prob: f32 = 
+        simulations.clone().filter(|s| *s == 0).count() as f32 / 
+        simulations.count() as f32;
+    println!("prob={}", prob);
+}
